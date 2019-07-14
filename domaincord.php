@@ -167,3 +167,30 @@ function register_oauth_callback_route() {
 	));
 }
 add_action('rest_api_init', 'register_oauth_callback_route');
+
+add_filter('woocommerce_product_single_add_to_cart_text', 'woo_custom_cart_button_text');
+function woo_custom_cart_button_text() {
+	return __('Buy Now', 'woocommerce');
+}
+
+function custom_remove_all_quantity_fields( $return, $product ) {return true;}
+add_filter( 'woocommerce_is_sold_individually','custom_remove_all_quantity_fields', 10, 2 );
+
+/**
+ * Disable all sales.
+ *
+ * A simple function to disable all the sales in the shop.
+ * Uncomment the line of code to disable the sale price on products.
+ */
+function custom_wc_get_sale_price( $sale_price, $product ) {
+	return $product->get_regular_price();
+	//return $sale_price;
+}
+add_filter( 'woocommerce_product_get_sale_price', 'custom_wc_get_sale_price', 50, 2 );
+add_filter( 'woocommerce_product_get_price', 'custom_wc_get_sale_price', 50, 2 );
+
+add_filter('woocommerce_add_to_cart_redirect', 'domaincord_add_to_cart_redirect');
+function domaincord_add_to_cart_redirect() {
+	$checkout_url = wc_get_checkout_url();
+	return $checkout_url;
+}
