@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load Scripts
-require_once(plugin_dir_path(__FILE__).'/includes/discord-sso-sync-scripts.php');
+require(plugin_dir_path(__FILE__).'/includes/discord-sso-sync-scripts.php');
 
 // Load widget class
 require_once(plugin_dir_path(__FILE__).'/includes/oauth-login-widget.php');
@@ -57,12 +57,29 @@ function discord_admin_settings_page() { ?>
 		<?php submit_button(); ?>
 		</form>
 	</div>
-<?php } ?>
-<?php
+<?php }
 
-function discord_section_text() {
-	echo '<p>Enter your Discord oAuth settings.</p>';
-}
+function discord_section_text() { ?>
+	<p>Enter your Discord oAuth settings.</p>
+	<style>
+		.discord-sso-sync-notice {
+			background-color: #e5a0a0;
+			border: 2px solid #ca5353;
+			border-radius: 8px;
+			padding: 10px;
+		}
+
+		.discord-sso-sync-notice > pre {
+			padding: 5px;
+			background-color: black;
+			color: lime;
+		}
+	</style>
+	<div class="discord-sso-sync-notice">
+		<p><strong>Note:</strong><br />Please remember to set the following as the <em>Re-direct URI</em> in the <a href="https://discordapp.com/developers/applications/">Discord Developer Dashboard</a>.</p>
+		<pre><?php echo get_site_url() . '/wp-json/discord-sso-sync/callback' ?></pre>
+	</div>
+<?php }
 
 add_action('admin_menu', 'discord_admin_settings_menu');
 function discord_admin_settings_menu() {
