@@ -1,12 +1,12 @@
 <?php
 /*
-Plugin Name: DomainCord
-Plugin URI: https://github.com/domaincord/domaincord-wp-plugin
-Description: An exclusive plugin for DomainCord.com
+Plugin Name: Discord SSO Sync
+Plugin URI: https://crocbuzzstudios.com/discord-sso-sync
+Description: Implement Discord Single-Sign-On (SSO) on your WordPress site with automatic creation of WordPress user.
 Author: CrocBuzz Studios
 Version: 1.0.0
 Author URI: https://crocbuzzstudios.com
-Text Domain: domaincord
+Text Domain: discord-sso-sync
 */
 
 // Exit if accessed directly.
@@ -15,30 +15,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load Scripts
-require_once(plugin_dir_path(__FILE__).'/includes/domaincord-scripts.php');
+require_once(plugin_dir_path(__FILE__).'/includes/discord-sso-sync-scripts.php');
 
 // Load widget class
 require_once(plugin_dir_path(__FILE__).'/includes/oauth-login-widget.php');
 
-// Register widget
-function register_login_widget() {
-	register_widget('Oauth_Login_Widget');
-}
-
 // Hook in widget
 add_action('widgets_init', 'register_login_widget');
-
-add_action('admin_init', 'domaincord_admin_init');
-function domaincord_admin_init() {
-	register_setting('domaincord_oauth_settings_group', 'oauth_settings', 'oauth_settings_validate');
-	add_settings_section('domaincord_oauth', 'oAuth Settings', 'domaincord_section_text', 'oauth');
+function register_login_widget() {
+	register_widget('Discord_Oauth_Login_Widget');
 }
 
-function domaincord_admin_settings_page() { ?>
+add_action('admin_init', 'discord_admin_init');
+function discord_admin_init() {
+	register_setting('discord_oauth_settings_group', 'oauth_settings', 'oauth_settings_validate');
+	add_settings_section('discord_oauth', 'oAuth Settings', 'discord_section_text', 'oauth');
+}
+
+function discord_admin_settings_page() { ?>
 	<div class="wrap">
-		<h1>DomainCord Settings</h1>
+		<h1>Discord SSO Sync Settings</h1>
 		<form method="post" action="options.php"> 
-		<?php settings_fields( 'domaincord_oauth_settings_group' ); ?>
+		<?php settings_fields( 'discord_oauth_settings_group' ); ?>
 		<?php do_settings_sections( 'oauth' ); ?>
 			<table class="form-table">
 				<tr valign="top">
@@ -62,26 +60,26 @@ function domaincord_admin_settings_page() { ?>
 <?php } ?>
 <?php
 
-function domaincord_section_text() {
+function discord_section_text() {
 	echo '<p>Enter your Discord oAuth settings.</p>';
 }
 
-add_action('admin_menu', 'domaincord_admin_settings_menu');
-function domaincord_admin_settings_menu() {
+add_action('admin_menu', 'discord_admin_settings_menu');
+function discord_admin_settings_menu() {
 
 	//create new top-level menu
-	add_menu_page('DomainCord Settings', 'DomainCord', 'administrator', __FILE__, 'domaincord_admin_settings_page' , plugins_url('/images/icon.png', __FILE__) );
+	add_menu_page('Discord SSO Sync Settings', 'Discord SSO Sync', 'administrator', __FILE__, 'discord_admin_settings_page' , plugins_url('/images/icon.png', __FILE__) );
 
 	//call register settings function
-	add_action( 'admin_init', 'register_domaincord_admin_settings' );
+	add_action( 'admin_init', 'register_discord_admin_settings' );
 }
 
 
-function register_domaincord_admin_settings() {
+function register_discord_admin_settings() {
 	//register our settings
-	register_setting( 'domaincord_oauth_settings_group', 'client_id' );
-	register_setting( 'domaincord_oauth_settings_group', 'client_secret' );
-	register_setting( 'domaincord_oauth_settings_group', 'oauth_scopes' );
+	register_setting( 'discord_oauth_settings_group', 'client_id' );
+	register_setting( 'discord_oauth_settings_group', 'client_secret' );
+	register_setting( 'discord_oauth_settings_group', 'oauth_scopes' );
 }
 
 function create_new_user_from_discord_or_login_existing($res, $user) {
@@ -120,7 +118,7 @@ function exchange_code_for_token_response($code) {
 		'scope' => $scopes,
 		'grant_type' => 'authorization_code',
 		'code' => $code,
-		'redirect_uri' => site_url( 'wp-json/domaincord/v1/discord/login/callback', 'http' )
+		'redirect_uri' => site_url( 'wp-json/discord-sso-sync/callback', 'http' )
 	);
 
 	$headers = array(
@@ -161,36 +159,9 @@ function site_login_via_oauth() {
 }
 
 function register_oauth_callback_route() {
-	register_rest_route( 'domaincord/v1', '/discord/login/callback', array(
+	register_rest_route( 'discord-sso-sync', '/callback', array(
 		'methods' => 'GET',
 		'callback' => 'site_login_via_oauth',
 	));
 }
 add_action('rest_api_init', 'register_oauth_callback_route');
-
-add_filter('woocommerce_product_single_add_to_cart_text', 'woo_custom_cart_button_text');
-function woo_custom_cart_button_text() {
-	return __('Buy Now', 'woocommerce');
-}
-
-function custom_remove_all_quantity_fields( $return, $product ) {return true;}
-add_filter( 'woocommerce_is_sold_individually','custom_remove_all_quantity_fields', 10, 2 );
-
-/**
- * Disable all sales.
- *
- * A simple function to disable all the sales in the shop.
- * Uncomment the line of code to disable the sale price on products.
- */
-function custom_wc_get_sale_price( $sale_price, $product ) {
-	return $product->get_regular_price();
-	//return $sale_price;
-}
-add_filter( 'woocommerce_product_get_sale_price', 'custom_wc_get_sale_price', 50, 2 );
-add_filter( 'woocommerce_product_get_price', 'custom_wc_get_sale_price', 50, 2 );
-
-add_filter('woocommerce_add_to_cart_redirect', 'domaincord_add_to_cart_redirect');
-function domaincord_add_to_cart_redirect() {
-	$checkout_url = wc_get_checkout_url();
-	return $checkout_url;
-}
