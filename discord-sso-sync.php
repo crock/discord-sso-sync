@@ -85,7 +85,7 @@ add_action('admin_menu', 'discord_admin_settings_menu');
 function discord_admin_settings_menu() {
 
 	//create new top-level menu
-	add_menu_page('Discord SSO Sync Settings', 'Discord SSO Sync', 'administrator', __FILE__, 'discord_admin_settings_page' , plugins_url('/images/icon.png', __FILE__) );
+	add_menu_page('Discord SSO Sync Settings', 'Discord SSO Sync', 'administrator', __FILE__, 'discord_admin_settings_page' , plugins_url('/assets/images/Discord-Logo-White.png', __FILE__) );
 
 	//call register settings function
 	add_action( 'admin_init', 'register_discord_admin_settings' );
@@ -104,7 +104,7 @@ function create_new_user_from_discord_or_login_existing($res, $user) {
 	if ( email_exists( $user['email'] )) {
 		$existingUser = get_user_by( 'email', $user['email'] );
 		wp_set_auth_cookie( $existingUser->ID, true, is_ssl() );
-		wp_redirect( home_url( '/my-account' ) );
+		wp_redirect( home_url( '/' ) );
 		exit;
 	}
 	
@@ -135,7 +135,7 @@ function exchange_code_for_token_response($code) {
 		'scope' => $scopes,
 		'grant_type' => 'authorization_code',
 		'code' => $code,
-		'redirect_uri' => site_url( 'wp-json/discord-sso-sync/callback', 'http' )
+		'redirect_uri' => site_url( 'wp-json/discord-sso-sync/callback', is_ssl() ? 'https' : 'http' )
 	);
 
 	$headers = array(

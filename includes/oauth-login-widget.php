@@ -46,7 +46,11 @@ class Discord_Oauth_Login_Widget extends WP_Widget {
                 echo '<p class="login-status-text">Logged in as '. $user->display_name . ' ' . '<a href="' . wp_logout_url()  . '">Logout?</a></p>'; 
             } else { ?>
                 <a class="discord-login-btn" href="<?php echo $this->oauthUrl; ?>">
-                    <i class="fab fa-discord"></i> Sign in with Discord
+                    <?php printf(
+                        '<img src="%1$s" alt="discord logo" />',
+                        plugins_url( '/discord-sso-sync/assets/images/icon.svg' )
+                    ); ?>
+                    Sign in with Discord
                 </a>
             <?php
             }
