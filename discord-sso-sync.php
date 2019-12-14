@@ -1,12 +1,12 @@
 <?php
 /*
 Plugin Name: Discord SSO Sync
-Plugin URI: https://crocbuzzstudios.com/discord-sso-sync
+Plugin URI: https://domaincord.com/wordpress/plugins/discord-sso-sync
 Description: Implement Discord Single-Sign-On (SSO) on your WordPress site with automatic creation of WordPress user.
-Author: CrocBuzz Studios
+Author: Domaincord LLC
 Version: 1.0.0
-Author URI: https://crocbuzzstudios.com
-Text Domain: discord-sso-sync
+Author URI: https://domaincord.com
+Text Domain: dncord
 */
 
 // Exit if accessed directly.
@@ -77,7 +77,7 @@ function discord_section_text() { ?>
 	</style>
 	<div class="discord-sso-sync-notice">
 		<p><strong>Note:</strong><br />Please remember to set the following as the <em>Re-direct URI</em> in the <a href="https://discordapp.com/developers/applications/">Discord Developer Dashboard</a>.</p>
-		<pre><?php echo get_site_url() . '/wp-json/discord-sso-sync/callback' ?></pre>
+		<pre><?php echo get_site_url() . '/' . rest_get_url_prefix() . '/discord/callback' ?></pre>
 	</div>
 <?php }
 
@@ -135,7 +135,7 @@ function exchange_code_for_token_response($code) {
 		'scope' => $scopes,
 		'grant_type' => 'authorization_code',
 		'code' => $code,
-		'redirect_uri' => site_url( 'wp-json/discord-sso-sync/callback', is_ssl() ? 'https' : 'http' )
+		'redirect_uri' => site_url( rest_get_url_prefix() . '/discord/callback', is_ssl() ? 'https' : 'http' )
 	);
 
 	$headers = array(
@@ -176,7 +176,7 @@ function site_login_via_oauth() {
 }
 
 function register_oauth_callback_route() {
-	register_rest_route( 'discord-sso-sync', '/callback', array(
+	register_rest_route( 'discord', '/callback', array(
 		'methods' => 'GET',
 		'callback' => 'site_login_via_oauth',
 	));

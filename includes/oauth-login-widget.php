@@ -23,7 +23,7 @@ class Discord_Oauth_Login_Widget extends WP_Widget {
             'client_secret' => $client_secret,
             'scope' => $scopes,
             'response_type' => 'code',
-            'redirect_uri' => site_url( 'wp-json/discord-sso-sync/callback', 'http' )
+            'redirect_uri' => site_url(  rest_get_url_prefix() . '/discord/callback', 'http' )
         ));
 
         $this->oauthUrl = 'https://discordapp.com/api/oauth2/authorize?' . $qs;
