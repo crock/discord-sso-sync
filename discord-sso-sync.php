@@ -7,7 +7,7 @@ Author: Domaincord LLC
 Version: 1.0.0
 Author URI: https://domaincord.com
 Text Domain: dncord
-GitHub Plugin URI: https://github.com/crock/discord-sso-sync
+GitHub Plugin URI: https://github.com/domaincord/discord-sso-sync
 */
 
 // Exit if accessed directly.
