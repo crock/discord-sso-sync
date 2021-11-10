@@ -1,5 +1,5 @@
-=== Discord SSO Sync ===
+=== Discord Sync ===
 Contributors: crocbuzz
 Requires at least: 5.0
-Tested up to: 5.3.1
+Tested up to: 5.8.1
 Requires PHP: 7.0

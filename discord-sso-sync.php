@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: Discord SSO Sync
-Plugin URI: https://domaincord.com/wordpress/plugins/discord-sso-sync
+Plugin URI: https://github.com/crock/discord-sso-sync
 Description: Implement Discord Single-Sign-On (SSO) on your WordPress site with automatic creation of WordPress user.
-Author: Domaincord LLC
+Author: Alex Crocker
 Version: 1.0.0
-Author URI: https://domaincord.com
-Text Domain: dncord
-GitHub Plugin URI: https://github.com/domaincord/discord-sso-sync
+Author URI: https://crock.dev
+Text Domain: crocbuzz
+GitHub Plugin URI: https://github.com/crock/discord-sso-sync
 */
 
 // Exit if accessed directly.
@@ -121,6 +121,7 @@ function create_new_user_from_discord_or_login_existing($res, $user) {
 	add_user_meta($user_id, '_discord_refresh_token', $res['refresh_token'], true);
 
 	wp_set_auth_cookie( $user_id, true, is_ssl() );
+	wp_redirect(home_url( '/' ));
 }
 
 function exchange_code_for_token_response($code) {
