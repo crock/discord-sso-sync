@@ -31,6 +31,7 @@ add_action('admin_init', 'discord_admin_init');
 function discord_admin_init() {
 	register_setting('discord_oauth_settings_group', 'oauth_settings', 'oauth_settings_validate');
 	add_settings_section('discord_oauth', 'oAuth Settings', 'discord_section_text', 'oauth');
+	add_settings_section('widget_instructions', 'Activating Login Widget', 'widget_instructions_text', 'oauth');
 }
 
 function discord_admin_settings_page() { ?>
@@ -57,6 +58,14 @@ function discord_admin_settings_page() { ?>
 			</table>
 		<?php submit_button(); ?>
 		</form>
+	</div>
+<?php }
+
+function widget_instructions_text() { ?>
+	<p>Follow these instructions to add a Discord login widget to your site.</p>
+	<div class="discord-sso-sync-widget-instructions">
+		<p>Navigate to <strong>Appearance -> Widgets</strong> in the WordPress Admin Control Panel.</p>
+		<img src="<?php echo plugins_url('/assets/images/widget-modal-screenshot.png', __FILE__) ?>" alt="Appearance Widget Modal Screenshot" />
 	</div>
 <?php }
 
